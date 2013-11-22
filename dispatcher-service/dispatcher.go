@@ -8,15 +8,20 @@ func main () {
 	var (
 		err error
 		conn *dbus.Connection
+		messages = make(chan *dbus.Message)
 	)
 
-	// Connect to Session or System buses.
+	// Connect to Session bus.
 	if conn, err = dbus.Connect(dbus.SessionBus); err != nil {
 		log.Fatal("Connection error:", err)
 	}
-	if err = conn.Authenticate(); err != nil {
-		log.Fatal("Authentication error:", err)
-	}
+
+	conn.RegisterObjectPath("/com/canonical/URLDispatcher", messages);
 
 	fmt.Println("Hello World")
+
+	for {
+		message := <- messages
+		fmt.Println("Got Message:", message)
+	}
 }
