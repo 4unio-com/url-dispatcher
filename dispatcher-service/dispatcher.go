@@ -4,6 +4,10 @@ import "launchpad.net/~jamesh/go-dbus/trunk"
 import "fmt"
 import "log"
 
+func handleURLMessage (message *dbus.Message) {
+
+}
+
 func main () {
 	var (
 		err error
@@ -23,5 +27,12 @@ func main () {
 	for {
 		message := <- messages
 		fmt.Println("Got Message:", message)
+		switch message.Member {
+		case "DispatchURL":
+			go handleURLMessage(message)
+		default:
+			errormsg := dbus.NewErrorMessage(message, "InvalidInterface", "Unsupported function")
+			conn.Send(errormsg)
+		}
 	}
 }
