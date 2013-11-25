@@ -39,8 +39,10 @@ func initHandlers () {
 }
 
 func handleURLMessage (message *dbus.Message, conn *dbus.Connection) {
+	var url string
 	handlersHandled := make(chan bool, len(urlHandlers))
-	url := "foo"
+
+	message.Args(&url)
 
 	for _, handler := range urlHandlers {
 		go handler.handleURL(url, handlersHandled, conn)
