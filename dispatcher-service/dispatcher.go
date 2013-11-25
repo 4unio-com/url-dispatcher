@@ -26,6 +26,7 @@ func (handler urlHandler) handleURL(url string, returnchan chan bool, conn *dbus
 	if _, error := conn.SendWithReply(message); error != nil {
 		fmt.Println("Unable to start application")
 		returnchan <- false
+		return
 	}
 
 	returnchan <- true
