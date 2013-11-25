@@ -7,10 +7,10 @@ import "regexp"
 
 type urlHandler struct {
 	application string
-	regex string
+	regex       string
 }
 
-func (handler urlHandler) handleURL (url string, returnchan chan bool, conn *dbus.Connection) {
+func (handler urlHandler) handleURL(url string, returnchan chan bool, conn *dbus.Connection) {
 	if matched, _ := regexp.MatchString(handler.regex, url); !matched {
 		fmt.Println("Unable to match URL", url, "with regular expression", handler.regex)
 		returnchan <- false
@@ -18,10 +18,10 @@ func (handler urlHandler) handleURL (url string, returnchan chan bool, conn *dbu
 	}
 
 	message := dbus.NewMethodCallMessage("com.ubuntu.Upstart", "/com/ubuntu/Upstart/jobs/application", "com.ubuntu.Upstart0_6.Job", "Start")
-	
-	var env []string;
+
+	var env []string
 	env = append(env, fmt.Sprintf("APP_ID=%s", handler.application))
-	message.AppendArgs(env, true);
+	message.AppendArgs(env, true)
 
 	if _, error := conn.SendWithReply(message); error != nil {
 		fmt.Println("Unable to start application")
@@ -33,13 +33,13 @@ func (handler urlHandler) handleURL (url string, returnchan chan bool, conn *dbu
 
 var urlHandlers []urlHandler
 
-func initHandlers () {
+func initHandlers() {
 	urlHandlers = append(urlHandlers,
 		urlHandler{application: "webbrowser-app", regex: "^http://"},
 		urlHandler{application: "webbrowser-app", regex: "^https://"})
 }
 
-func handleURLMessage (message *dbus.Message, conn *dbus.Connection) {
+func handleURLMessage(message *dbus.Message, conn *dbus.Connection) {
 	var url string
 	handlersHandled := make(chan bool, len(urlHandlers))
 
@@ -68,10 +68,10 @@ func handleURLMessage (message *dbus.Message, conn *dbus.Connection) {
 	conn.Send(returnmessage)
 }
 
-func main () {
+func main() {
 	var (
-		err error
-		conn *dbus.Connection
+		err      error
+		conn     *dbus.Connection
 		messages = make(chan *dbus.Message)
 	)
 
@@ -84,10 +84,10 @@ func main () {
 
 	fmt.Println("DBus Unique Name", conn.UniqueName)
 
-	conn.RegisterObjectPath("/com/canonical/URLDispatcher", messages);
+	conn.RegisterObjectPath("/com/canonical/URLDispatcher", messages)
 
 	for {
-		message := <- messages
+		message := <-messages
 		fmt.Println("Got Message:", message)
 		switch message.Member {
 		case "DispatchURL":
