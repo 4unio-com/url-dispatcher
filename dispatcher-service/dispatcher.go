@@ -14,6 +14,7 @@ func (handler urlHandler) handleURL (url string, returnchan chan bool, conn *dbu
 	if matched, _ := regexp.MatchString(handler.regex, url); !matched {
 		fmt.Println("Unable to match URL", url, "with regular expression", handler.regex)
 		returnchan <- false
+		return
 	}
 
 	message := dbus.NewMethodCallMessage("com.ubuntu.Upstart", "/com/ubuntu/Upstart/jobs/application", "com.ubuntu.Upstart0_6.Job", "Start")
@@ -80,6 +81,8 @@ func main () {
 	if conn, err = dbus.Connect(dbus.SessionBus); err != nil {
 		log.Fatal("Connection error:", err)
 	}
+
+	fmt.Println("DBus Unique Name", conn.UniqueName)
 
 	conn.RegisterObjectPath("/com/canonical/URLDispatcher", messages);
 
