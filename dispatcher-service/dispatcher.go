@@ -50,6 +50,15 @@ func handleURLMessage (message *dbus.Message, conn *dbus.Connection) {
 			handlerCount = handlerCount + 1
 		}
 	}
+
+	var returnmessage *dbus.Message
+	if handlerCount > 0 {
+		returnmessage = dbus.NewMethodReturnMessage(message)
+	} else {
+		returnmessage = dbus.NewErrorMessage(message, "InvalidURL", "No handlers for URL")
+	}
+
+	conn.Send(returnmessage)
 }
 
 func main () {
