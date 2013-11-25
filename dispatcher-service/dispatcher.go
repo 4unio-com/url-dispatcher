@@ -10,8 +10,18 @@ type urlHandler struct {
 	regex string
 }
 
-func (handler urlHandler) handleURL (url string, returnchan chan bool) {
+func (handler urlHandler) handleURL (url string, returnchan chan bool, conn *dbus.Connection) {
 	if matched, _ := regexp.MatchString(handler.regex, url); !matched {
+		returnchan <- false
+	}
+
+	message := dbus.NewMethodCallMessage("com.ubuntu.Upstart", "/com/ubuntu/Upstart/jobs/application", "com.ubuntu.Upstart0_6.Job", "Start")
+	
+	var env []string;
+	env = append(env, fmt.Sprintf("APP_ID=%s", handler.application))
+	message.AppendArgs(env, true);
+
+	if _, error := conn.SendWithReply(message); error != nil {
 		returnchan <- false
 	}
 
@@ -26,12 +36,12 @@ func initHandlers () {
 		urlHandler{application: "webbrowser-app", regex: "^https://"})
 }
 
-func handleURLMessage (message *dbus.Message) {
+func handleURLMessage (message *dbus.Message, conn *dbus.Connection) {
 	handlersHandled := make(chan bool, len(urlHandlers))
 	url := "foo"
 
 	for _, handler := range urlHandlers {
-		go handler.handleURL(url, handlersHandled)
+		go handler.handleURL(url, handlersHandled, conn)
 	}
 
 	handlerCount := 0
@@ -65,7 +75,7 @@ func main () {
 		fmt.Println("Got Message:", message)
 		switch message.Member {
 		case "DispatchURL":
-			go handleURLMessage(message)
+			go handleURLMessage(message, conn)
 		default:
 			errormsg := dbus.NewErrorMessage(message, "InvalidInterface", "Unsupported function")
 			conn.Send(errormsg)
