@@ -12,6 +12,7 @@ type urlHandler struct {
 
 func (handler urlHandler) handleURL (url string, returnchan chan bool, conn *dbus.Connection) {
 	if matched, _ := regexp.MatchString(handler.regex, url); !matched {
+		fmt.Println("Unable to match URL", url, "with regular expression", handler.regex)
 		returnchan <- false
 	}
 
@@ -22,6 +23,7 @@ func (handler urlHandler) handleURL (url string, returnchan chan bool, conn *dbu
 	message.AppendArgs(env, true);
 
 	if _, error := conn.SendWithReply(message); error != nil {
+		fmt.Println("Unable to start application")
 		returnchan <- false
 	}
 
@@ -53,8 +55,10 @@ func handleURLMessage (message *dbus.Message, conn *dbus.Connection) {
 
 	var returnmessage *dbus.Message
 	if handlerCount > 0 {
+		fmt.Println("Finished handling", url)
 		returnmessage = dbus.NewMethodReturnMessage(message)
 	} else {
+		fmt.Println("Invalid URL", url)
 		returnmessage = dbus.NewErrorMessage(message, "InvalidURL", "No handlers for URL")
 	}
 
@@ -76,8 +80,6 @@ func main () {
 	}
 
 	conn.RegisterObjectPath("/com/canonical/URLDispatcher", messages);
-
-	fmt.Println("Hello World")
 
 	for {
 		message := <- messages
