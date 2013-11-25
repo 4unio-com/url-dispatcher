@@ -3,11 +3,19 @@ package main
 import "launchpad.net/~jamesh/go-dbus/trunk"
 import "fmt"
 import "log"
-//import "regexp"
+import "regexp"
 
 type urlHandler struct {
 	application string
 	regex string
+}
+
+func (handler urlHandler) handleURL (url string, returnchan chan bool) {
+	if matched, _ := regexp.MatchString(handler.regex, url); !matched {
+		returnchan <- false
+	}
+
+	returnchan <- true
 }
 
 var urlHandlers []urlHandler
@@ -19,7 +27,19 @@ func initHandlers () {
 }
 
 func handleURLMessage (message *dbus.Message) {
+	handlersHandled := make(chan bool, len(urlHandlers))
+	url := "foo"
 
+	for _, handler := range urlHandlers {
+		go handler.handleURL(url, handlersHandled)
+	}
+
+	handlerCount := 0
+	for i := 0; i < len(urlHandlers); i++ {
+		if <-handlersHandled {
+			handlerCount = handlerCount + 1
+		}
+	}
 }
 
 func main () {
