@@ -12,7 +12,7 @@ Build-Depends: cmake,
                libglib2.0-dev,
                libjson-glib-dev,
                libgtest-dev,
-               libupstart-app-launch1-dev,
+               libupstart-app-launch2-dev,
                python,
 Standards-Version: 3.9.4
 Homepage: http://launchpad.net/url-dispatcher

@@ -1,3 +1,9 @@
+url-dispatcher (0.1+13.10.20131014.2-0ubuntu2) trusty; urgency=low
+
+  * Cherry-pick libupstart-app-launch API/ABI bump from trunk
+
+ -- Łukasz 'sil2100' Zemczak <lukasz.zemczak@canonical.com>  Fri, 06 Dec 2013 14:32:26 +0100
+
 url-dispatcher (0.1+13.10.20131014.2-0ubuntu1) saucy; urgency=low
 
   [ Michal Hruby ]
