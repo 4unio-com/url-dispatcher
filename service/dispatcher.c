@@ -484,7 +484,7 @@ dispatcher_init (GMainLoop * mainloop)
 
 	/* FIXME: Legacy */
 	musicfilere = g_regex_new("^file:///home/" USERNAME_REGEX "/Music/", 0, 0, NULL);
-	videofilere = g_regex_new("^file:///home/" USERNAME_REGEX "/Videos/", 0, 0, NULL);
+	videofilere = g_regex_new("^file:///(home|media)/" USERNAME_REGEX "(.*)?/Videos/", 0, 0, NULL);
 
 	g_bus_get(G_BUS_TYPE_SESSION, cancellable, bus_got, mainloop);
 
