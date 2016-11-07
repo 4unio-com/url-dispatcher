@@ -1,3 +1,11 @@
+url-dispatcher (0.1+15.04.20161107-0ubuntu1) vivid; urgency=medium
+
+  [ Larry Price ]
+  * App ID should allow package names with dots. (LP: #1591342,
+    #1606593, #1606598)
+
+ -- Ted Gould <ted@gould.cx>  Mon, 07 Nov 2016 17:14:19 +0000
+
 url-dispatcher (0.1+15.04.20160816.1-0ubuntu1) vivid; urgency=medium
 
   * No chnage rebuild for UAL migration
